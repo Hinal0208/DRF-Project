@@ -1,7 +1,8 @@
 from django.contrib import messages 
 from django.shortcuts import render,redirect   
 from django.contrib.auth.decorators import login_required
-from app.models import Course, CustomUser,Session_Year,Trainee,Mentor
+from app.models import Course, CustomUser,Session_Year,Trainee,Mentor,Feees
+from django.contrib.auth.models import User
 
 @login_required(login_url='/')
 def HOME(request):
@@ -78,6 +79,7 @@ def ADD_TRAINEE(request):
    
     return render(request,'manager/add_trainee.html',context)
 
+@login_required(login_url='/')
 def VIEW_TRAINEE(request):
     trainee =Trainee.objects.all()
     context= {
@@ -85,6 +87,7 @@ def VIEW_TRAINEE(request):
     }
     return render(request,'manager/view_trainee.html',context)
 
+@login_required(login_url='/')
 def EDIT_TRAINEE(request,id):
     trainee=Trainee.objects.filter(id=id)
 
@@ -101,6 +104,7 @@ def EDIT_TRAINEE(request,id):
 
     return render(request,'manager/edit_trainee.html',context)
 
+@login_required(login_url='/')
 def UPDATE_TRAINEE(request):
     if request.method=="POST":
         trainee_id=request.POST.get('trainee_id')
@@ -119,6 +123,7 @@ def UPDATE_TRAINEE(request):
 
     return render (request,'manager/edit_trainee.html')
 
+@login_required(login_url='/')
 def DELETE_TRAINEE(request,admin):
     # t_admin = admin
     trainee=CustomUser.objects.get(id=admin)
@@ -182,6 +187,7 @@ def ADD_MENTOR(request):
    
     return render(request,'manager/add_mentor.html')
 
+@login_required(login_url='/')
 def VIEW_MENTOR(request):
     mentor =Mentor.objects.all()
     context= {
@@ -189,6 +195,7 @@ def VIEW_MENTOR(request):
     }
     return render(request,'manager/view_mentor.html',context)
 
+@login_required(login_url='/')
 def EDIT_MENTOR(request,id):
     trainee=Trainee.objects.filter(id=id)
 
@@ -203,6 +210,7 @@ def EDIT_MENTOR(request,id):
 
     return render(request,'manager/edit_mentor.html',context)
 
+@login_required(login_url='/')
 def UPDATE_MENTOR(request):
     if request.method=="POST":
         trainee_id=request.POST.get('trainee_id')
@@ -220,10 +228,11 @@ def UPDATE_MENTOR(request):
 
     return render (request,'manager/edit_mentor.html')
 
-def DELETE_MENTOR(request,admin):
-    t_admin = admin
-    trainee=CustomUser.objects.get(id=admin)
-    trainee.delete()
+@login_required(login_url='/')
+def DELETE_MENTOR(request,id):
+    mentor=Mentor.objects.get(id=id)    
+    print(mentor)
+    mentor.delete()
     messages.success(request,'Record is successfully deleted')
     return redirect('view_mentor')
     
@@ -244,14 +253,15 @@ def ADD_COURSE(request):
     
     return render(request,'manager/add_course.html')
 
+@login_required(login_url='/')
 def VIEW_COURSE(request):
-    course=Course.objects.all()
+    course = Course.objects.all()
     context = {
         'course':course,
     }
-   
     return render(request,'manager/view_course.html',context)
 
+@login_required(login_url='/')
 def EDIT_COURSE(request,id):
     course=Course.objects.get(id=id)
 
@@ -260,5 +270,67 @@ def EDIT_COURSE(request,id):
     }
     return render(request,'manager/edit_course.html',context)
 
+@login_required(login_url='/')
 def UPDATE_COURSE(request):
     return render(request,'manager/edit_course.html')
+
+
+@login_required(login_url='/')
+def DELETE_COURSE(request,id):
+    course_id = id
+    course=Course.objects.get(id=id)
+    course.delete()
+    messages.success(request,'Record is successfully deleted')
+    return redirect('view_course')
+
+@login_required(login_url='/')
+def ADD_SESSION(request):
+    if request.method == "POST":
+        session_start=request.POST.get('session_start')
+        session_end= request.POST.get('session_end')
+        session_name = request.POST.get('session_name')
+
+        session=Session_Year(
+            session_start=session_start,
+            session_end=session_end,
+            session_name=session_name,
+        )
+        session.save()
+        messages.success(request,'session are successfully added')
+        return redirect('add_session')
+
+    return render(request,'manager/add_session.html')
+
+@login_required(login_url='/')
+def VIEW_SESSION(request):
+    session=Session_Year.objects.all()
+
+    context={
+        'session':session
+    }
+    return render(request,'manager/view_session.html',context)
+
+
+@login_required(login_url='/')
+def DELETE_SESSION(request,id):
+    session_id = id
+    session=Session_Year.objects.get(id=id)
+    session.delete()
+    messages.success(request,'Record is successfully deleted')
+    return redirect('view_session')
+
+@login_required(login_url='/')
+def VIEW_FEES(request):
+    feees = Feees.objects.all()
+    context = {
+        'feees':feees,
+    }
+    return render(request,'manager/view_feees.html',context)
+
+@login_required(login_url='/')
+def DELETE_FEES(request,id):
+    fees_id = id
+    fees=Feees.objects.get(id=id)
+    fees.delete()
+    messages.success(request,'Record is successfully deleted')
+    return redirect('view_fees')

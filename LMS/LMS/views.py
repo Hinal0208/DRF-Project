@@ -35,7 +35,7 @@ def doLogin(request):
            if user_type == '1':
                return redirect('manager_Home')
            elif user_type == '2':
-               return HttpResponse('This is Mentor Panel')
+               return redirect('mentor_Home')
            elif user_type == '3':
                return redirect('manager_Home')
            else:
@@ -79,3 +79,6 @@ def password_reset_request(request):
 					return redirect ("/password_reset/done/")
 	password_reset_form = PasswordResetForm()
 	return render(request=request, template_name="password_reset.html", context={"password_reset_form":password_reset_form})
+
+
+
